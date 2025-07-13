@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BaselineBrains Profit / Loss</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+  <h1>BaselineBrains Profit / Loss</h1>
+
+  <p id="lastUpdated"></p>
+
+  <h2>Dashboard</h2>
+  <div class="table-container">
+    <table class="dataTable">
+      <thead id="dashboardHead"></thead>
+      <tbody id="dashboardBody"></tbody>
+    </table>
+  </div>
+
+  <h2>Tips Log</h2>
+  <div class="table-container">
+    <table class="dataTable">
+      <thead id="tipsHead"></thead>
+      <tbody id="tipsBody"></tbody>
+    </table>
+  </div>
+
+  <footer>BaselineBrains © 2025 — All Rights Reserved.</footer>
+
+  <script>
+    function buildTablePapa(csvUrl, headId, bodyId) {
+      Papa.parse(csvUrl, {
+        download: true,
+        header: false,
+        complete: function(results) {
+          const rows = results.data;
+          const tableHead = document.getElementById(headId);
+          const tableBody = document.getElementById(bodyId);
+
+          if (rows.length > 0) {
+            let headerRow = '<tr>';
+            rows[0].forEach(cell => {
+              headerRow += '<th>' + cell + '</th>';
+            });
+            headerRow += '</tr>';
+            tableHead.innerHTML = headerRow;
+          }
+
+          for (let i = 1; i < rows.length; i++) {
+            if (rows[i].every(cell => cell.trim() === "" || cell.trim() === '"')) continue;
+            let rowHtml = '<tr>';
+            rows[i].forEach((cell, colIndex) => {
+              let className = "";
+              if (colIndex === 5) { 
+                if (cell.toLowerCase().includes("win")) className = "win";
+                else if (cell.toLowerCase().includes("loss")) className = "loss";
+                else if (cell.toLowerCase().includes("void")) className = "void";
+              }
+              rowHtml += '<td class="' + className + '">' + cell + '</td>';
+            });
+            rowHtml += '</tr>';
+            tableBody.innerHTML += rowHtml;
+          }
+
+          // Update last updated timestamp
+          document.getElementById('lastUpdated').innerText = 'Last updated: ' + new Date().toLocaleString();
+        },
+        error: function(err) {
+          console.error('PapaParse error:', err);
+        }
+      });
+    }
+
+    buildTablePapa("https://docs.google.com/spreadsheets/d/e/2PACX-1vR1SqB34ONUqDxXRd6w8vc2VqpaumUypOxIuK-4sTQ6zCr6MHFP-2VsICOr5ILqzg/pub?gid=1265439786&single=true&output=csv", "dashboardHead", "dashboardBody");
+    buildTablePapa("https://docs.google.com/spreadsheets/d/e/2PACX-1vR1SqB34ONUqDxXRd6w8vc2VqpaumUypOxIuK-4sTQ6zCr6MHFP-2VsICOr5ILqzg/pub?gid=1251556089&single=true&output=csv", "tipsHead", "tipsBody");
+  </script>
+</body>
+</html>
