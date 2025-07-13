@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BaselineBrains Profit / Loss</title>
+  <meta name="description" content="BaselineBrains Tennis Tipster - Transparent Profit and Loss Tracking.">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"/>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+  <img src="logo.png" alt="BaselineBrains Logo" class="logo" />
+  <h1>BaselineBrains Profit / Loss</h1>
+
+  <p class="about">BaselineBrains is a tennis tipster service tracking all tips and profit/loss transparently. Data comes live from Google Sheets — no edits, no hiding. Gamble responsibly.</p>
+
+  <p id="lastUpdated"></p>
+
+  <h2>Profit Trend</h2>
+  <div class="chart-container">
+    <canvas id="profitChart"></canvas>
+  </div>
+
+  <h2>Tips Log</h2>
+  <div class="table-container">
+    <table id="tipsTable" class="dataTable">
+      <thead id="tipsHead"></thead>
+      <tbody id="tipsBody"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    BaselineBrains © 2025 — All Rights Reserved. |
+    <a href="https://x.com/BaselineBrains" target="_blank">@BaselineBrains on X</a><br>
+    <small>Results shown are for transparency only. Past performance does not guarantee future returns. Gamble responsibly.</small>
+  </footer>
+
+  <script>
+    Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-XXXXXXX/pub?gid=YOURGID&single=true&output=csv", {
+      download: true,
+      header: false,
+      complete: function(results) {
+        const rows = results.data;
+        const labels = [];
+        const profitData = [];
+
+        for (let i = 1; i < rows.length; i++) {
+          const date = rows[i][0];
+          const profit = parseFloat(rows[i][1]);
+          if (date && !isNaN(profit)) {
+            labels.push(date);
+            profitData.push(profit);
+          }
+        }
+
+        var ctx = document.getElementById('profitChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Cumulative Profit',
+              data: profitData,
+              borderColor: '#FFD700',
+              backgroundColor: 'rgba(255, 215, 0, 0.2)',
+              tension: 0.3,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Date'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Profit'
+                }
+              }
+            },
+            plugins: {
+              legend: { display: false }
+            }
+          }
+        });
+      },
+      error: function(err) {
+        console.error('Error loading Profit History CSV:', err);
+      }
+    });
+
+    // Tips Log DataTable
+    Papa.parse("YOUR_TIPS_LOG_CSV_LINK_HERE", {
+      download: true,
+      header: false,
+      complete: function(results) {
+        const rows = results.data;
+        const tableHead = document.getElementById('tipsHead');
+        const tableBody = document.getElementById('tipsBody');
+
+        if (rows.length > 0) {
+          let headerRow = '<tr>';
+          rows[0].forEach(cell => { headerRow += '<th>' + cell + '</th>'; });
+          headerRow += '</tr>';
+          tableHead.innerHTML = headerRow;
+        }
+
+        for (let i = 1; i < rows.length; i++) {
+          if (rows[i].every(cell => cell.trim() === "" || cell.trim() === '"')) continue;
+          let rowHtml = '<tr>';
+          rows[i].forEach(cell => { rowHtml += '<td>' + cell + '</td>'; });
+          rowHtml += '</tr>';
+          tableBody.innerHTML += rowHtml;
+        }
+
+        $('#tipsTable').DataTable({
+          language: {
+            searchPlaceholder: "Search matches, results, stakes...",
+            search: ""
+          }
+        });
+
+        document.getElementById('lastUpdated').innerText = 'Last updated: ' + new Date().toLocaleString();
+      }
+    });
+  </script>
+</body>
+</html>
