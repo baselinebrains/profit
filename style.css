@@ -1,0 +1,41 @@
+
+body {
+  font-family: 'Poppins', Arial, sans-serif;
+  padding: 2rem;
+  background: #2D4F3A; /* Dark green */
+  color: #fff;
+  text-align: center;
+}
+
+.logo {
+  max-width: 250px;
+  margin-bottom: 2rem;
+}
+
+h2 {
+  margin-top: 3rem;
+  color: #FFD700; /* Gold */
+}
+
+table.dataTable {
+  border-collapse: collapse;
+  margin: 0 auto 2rem;
+  width: 95%;
+  max-width: 1000px;
+  background: #fff;
+  color: #000;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+th {
+  background: #FFD700; /* Gold */
+  color: #000;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
