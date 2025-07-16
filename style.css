@@ -33,7 +33,7 @@ h1 {
 }
 
 #lastUpdated {
-  margin: 0;
+  margin-bottom: 0.5rem; /* Added small margin to separate from metrics table */
   font-size: 0.9rem;
   color: #ddd;
 }
@@ -111,7 +111,7 @@ td.pending {
 
 .chart-container {
   max-width: 1000px;
-  margin: -2rem auto 1rem; /* Increased negative margin to reduce space more */
+  margin: 0 auto 1rem; /* Removed negative margin to prevent overlap */
   border: 1px solid #FFD700;
   border-radius: 8px;
   background: #fff;
