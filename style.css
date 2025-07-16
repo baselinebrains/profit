@@ -111,7 +111,7 @@ td.pending {
 
 .chart-container {
   max-width: 1000px;
-  margin: -0.5rem auto 1rem; /* Negative margin to pull up closer to header */
+  margin: -1rem auto 1rem; /* Stronger negative margin to reduce space */
   border: 1px solid #FFD700;
   border-radius: 8px;
   background: #fff;
