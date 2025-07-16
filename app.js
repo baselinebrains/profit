@@ -53,7 +53,7 @@ async function loadData() {
     tipsTbody.innerHTML = '';
     tipsData.slice(1).forEach(row => {
       if (!row.join('').trim()) return;
-      const [date, tip, odds, stake, outcome, profit] = row;
+      const [date, tournament, tip, odds, stake, outcome, profit] = row;
       const lowerOutcome = outcome ? outcome.toLowerCase() : '';
       let outcomeClass = '';
       if (lowerOutcome === 'win') {
@@ -77,6 +77,7 @@ async function loadData() {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${date}</td>
+        <td>${tournament}</td>
         <td>${tip}</td>
         <td>${odds}</td>
         <td>${stake}</td>
