@@ -53,7 +53,7 @@ async function loadData() {
     tipsTbody.innerHTML = '';
     tipsData.slice(1).forEach(row => {
       if (!row.join('').trim()) return;
-      const [date, tournament, tip, odds, stake, outcome, profit] = row;
+      const [date, tournament, tip, odds, stake, outcome] = row;
       const lowerOutcome = outcome ? outcome.toLowerCase() : '';
       let outcomeClass = '';
       if (lowerOutcome === 'win') {
@@ -65,15 +65,6 @@ async function loadData() {
       } else if (lowerOutcome.includes('pending')) {
         outcomeClass = 'pending';
       }
-      let profitClass = '';
-      const profitValue = parseFloat(profit) || 0;
-      if (profitValue > 0) {
-        profitClass = 'win';
-      } else if (profitValue < 0) {
-        profitClass = 'loss';
-      } else {
-        profitClass = 'void';
-      }
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${date}</td>
@@ -82,7 +73,6 @@ async function loadData() {
         <td>${odds}</td>
         <td>${stake}</td>
         <td class="${outcomeClass}">${outcome}</td>
-        <td class="${profitClass}">${profit}</td>
       `;
       tipsTbody.appendChild(tr);
     });
