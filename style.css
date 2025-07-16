@@ -10,12 +10,15 @@ body {
 .hero {
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Ensures logo, title, and last updated are centered */
 }
 
 .logo {
   width: 100%;
   max-width: 150px;
-  margin: 0;
+  margin: 0 auto;
   animation: fadeIn 1s ease-in;
 }
 
@@ -33,7 +36,7 @@ h1 {
 }
 
 #lastUpdated {
-  margin-bottom: 0.5rem; /* Added small margin to separate from metrics table */
+  margin-bottom: 0.5rem;
   font-size: 0.9rem;
   color: #ddd;
 }
@@ -111,7 +114,7 @@ td.pending {
 
 .chart-container {
   max-width: 1000px;
-  margin: 0 auto 1rem; /* Removed negative margin to prevent overlap */
+  margin: 0 auto 1rem;
   border: 1px solid #FFD700;
   border-radius: 8px;
   background: #fff;
@@ -123,6 +126,7 @@ td.pending {
   width: 100%;
   border-collapse: collapse;
   color: #000;
+  margin: 0 auto; /* Reinforce centering for metrics table */
 }
 
 .chart-container th, .chart-container td {
