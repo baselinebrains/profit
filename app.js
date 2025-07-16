@@ -32,7 +32,7 @@ function createTableFromCSV(data) {
       td.textContent = cell;
       tr.appendChild(td);
     });
-  tbody.appendChild(tr);
+    tbody.appendChild(tr);
   });
 
   table.appendChild(thead);
@@ -55,15 +55,24 @@ async function loadData() {
       if (!row.join('').trim()) return;
       const [date, tip, odds, stake, outcome, profit] = row;
       const lowerOutcome = outcome ? outcome.toLowerCase() : '';
-      let className = '';
-      if (lowerOutcome.includes('win') || lowerOutcome === 'w' || lowerOutcome === 'won') {
-        className = 'win';
-      } else if (lowerOutcome.includes('loss') || lowerOutcome === 'l' || lowerOutcome === 'lost') {
-        className = 'loss';
+      let outcomeClass = '';
+      if (lowerOutcome === 'win') {
+        outcomeClass = 'win';
+      } else if (lowerOutcome === 'loss') {
+        outcomeClass = 'loss';
       } else if (lowerOutcome.includes('void')) {
-        className = 'void';
+        outcomeClass = 'void';
       } else if (lowerOutcome.includes('pending')) {
-        className = 'pending';
+        outcomeClass = 'pending';
+      }
+      let profitClass = '';
+      const profitValue = parseFloat(profit) || 0;
+      if (profitValue > 0) {
+        profitClass = 'win';
+      } else if (profitValue < 0) {
+        profitClass = 'loss';
+      } else {
+        profitClass = 'void';
       }
       const tr = document.createElement('tr');
       tr.innerHTML = `
@@ -71,8 +80,8 @@ async function loadData() {
         <td>${tip}</td>
         <td>${odds}</td>
         <td>${stake}</td>
-        <td class="${className}">${outcome}</td>
-        <td>${profit}</td>
+        <td class="${outcomeClass}">${outcome}</td>
+        <td class="${profitClass}">${profit}</td>
       `;
       tipsTbody.appendChild(tr);
     });
