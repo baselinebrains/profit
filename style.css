@@ -8,8 +8,9 @@ body {
 }
 
 .hero {
-  padding-bottom: 0;
+  padding: 0;
   margin-bottom: 0.5rem;
+  border-bottom: none; /* Removed border to reduce space */
 }
 
 .logo {
@@ -39,7 +40,7 @@ h1 {
 }
 
 h2 {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   color: #FFD700;
   font-weight: 600;
@@ -89,22 +90,28 @@ tr:hover {
 td.win {
   color: #fff;
   font-weight: bold;
-  background: #0b883e; /* Full green background for wins */
+  background: #0b883e; /* Full green for wins */
 }
 
 td.loss {
   color: #fff;
   font-weight: bold;
-  background: #c0392b; /* Full red background for losses */
+  background: #c0392b; /* Full red for losses */
 }
 
 td.void {
-  color: #888;
+  color: #fff;
   font-weight: bold;
-  background: rgba(136,136,136,0.3);
+  background: #888; /* Gray for voids */
 }
 
-.chart-container { /* Reused for dashboard table */
+td.pending {
+  color: #000;
+  font-weight: bold;
+  background: #ddd; /* Light gray for pending */
+}
+
+.chart-container {
   max-width: 1000px;
   margin: 0 auto 1rem;
   border: 1px solid #FFD700;
@@ -138,7 +145,7 @@ td.void {
 }
 
 footer {
-  margin-top: 2rem;
+  margin-top: 1rem;
   font-size: 0.9rem;
   color: #aaa;
   background: #1E3A28;
