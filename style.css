@@ -9,14 +9,13 @@ body {
 
 .hero {
   padding: 0;
-  margin-bottom: -1rem; /* Negative margin to reduce space below header */
-  border-bottom: none;
+  margin: 0;
 }
 
 .logo {
   width: 100%;
   max-width: 150px;
-  margin-bottom: 0;
+  margin: 0;
   animation: fadeIn 1s ease-in;
 }
 
@@ -26,7 +25,7 @@ body {
 }
 
 h1 {
-  margin-bottom: 0;
+  margin: 0;
   font-size: 2rem;
   color: #FFD700;
   font-weight: 600;
@@ -34,14 +33,13 @@ h1 {
 }
 
 #lastUpdated {
-  margin-bottom: 0;
+  margin: 0;
   font-size: 0.9rem;
   color: #ddd;
 }
 
 h2 {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin: 0.5rem 0;
   color: #FFD700;
   font-weight: 600;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
@@ -76,7 +74,7 @@ th {
 }
 
 tr:nth-child(even) {
-  background-color: #E8F5E9; /* Light green tint for brand */
+  background-color: #E8F5E9;
 }
 
 tr {
@@ -84,19 +82,19 @@ tr {
 }
 
 tr:hover {
-  background-color: #DCE775; /* Light goldish for hover */
+  background-color: #DCE775;
 }
 
 td.win {
   color: #fff;
   font-weight: bold;
-  background: #0b883e; /* Full green for wins */
+  background: #0b883e;
 }
 
 td.loss {
   color: #fff;
   font-weight: bold;
-  background: #c0392b; /* Full red for losses */
+  background: #c0392b;
 }
 
 td.void {
@@ -113,7 +111,7 @@ td.pending {
 
 .chart-container {
   max-width: 1000px;
-  margin: 0 auto 1rem;
+  margin: -0.5rem auto 1rem; /* Negative margin to pull up closer to header */
   border: 1px solid #FFD700;
   border-radius: 8px;
   background: #fff;
