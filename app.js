@@ -27,9 +27,19 @@ function createTableFromCSV(data) {
   data.slice(1).forEach(rowData => {
     if (rowData.every(cell => !cell)) return; // Skip empty rows
     const tr = document.createElement('tr');
-    rowData.forEach(cell => {
+    rowData.forEach((cell, index) => {
       const td = document.createElement('td');
       td.textContent = cell;
+      if (index === 0) { // Metric column
+        const lowerCell = cell.toLowerCase();
+        if (lowerCell === 'wins') {
+          td.className = 'win';
+        } else if (lowerCell === 'losses') {
+          td.className = 'loss';
+        } else if (lowerCell.includes('void')) {
+          td.className = 'void';
+        }
+      }
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
