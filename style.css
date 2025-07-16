@@ -9,8 +9,8 @@ body {
 
 .hero {
   padding: 0;
-  margin-bottom: 0.5rem;
-  border-bottom: none; /* Removed border to reduce space */
+  margin-bottom: -1rem; /* Negative margin to reduce space below header */
+  border-bottom: none;
 }
 
 .logo {
@@ -34,7 +34,7 @@ h1 {
 }
 
 #lastUpdated {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
   font-size: 0.9rem;
   color: #ddd;
 }
@@ -102,13 +102,13 @@ td.loss {
 td.void {
   color: #fff;
   font-weight: bold;
-  background: #888; /* Gray for voids */
+  background: #888;
 }
 
 td.pending {
   color: #000;
   font-weight: bold;
-  background: #ddd; /* Light gray for pending */
+  background: #ddd;
 }
 
 .chart-container {
