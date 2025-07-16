@@ -1,6 +1,6 @@
 body {
   font-family: 'Poppins', Arial, sans-serif;
-  padding: 3rem 1rem;
+  padding: 2rem 1rem;
   background: linear-gradient(to bottom, #2D4F3A, #1E3A28);
   color: #fff;
   text-align: center;
@@ -8,15 +8,15 @@ body {
 }
 
 .hero {
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
   border-bottom: 1px solid #FFD700;
 }
 
 .logo {
   width: 100%;
   max-width: 150px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   animation: fadeIn 1s ease-in;
 }
 
@@ -26,7 +26,7 @@ body {
 }
 
 h1 {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   font-size: 2rem;
   color: #FFD700;
   font-weight: 600;
@@ -34,13 +34,13 @@ h1 {
 }
 
 #lastUpdated {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   font-size: 0.9rem;
   color: #ddd;
 }
 
 h2 {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   color: #FFD700;
   font-weight: 600;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
@@ -89,13 +89,13 @@ tr:hover {
 td.win {
   color: #0b883e;
   font-weight: bold;
-  background: rgba(11,136,62,0.2); /* Slightly stronger green background for visibility */
+  background: rgba(11,136,62,0.3); /* Stronger green background */
 }
 
 td.loss {
   color: #c0392b;
   font-weight: bold;
-  background: rgba(192,57,43,0.2); /* Slightly stronger red background for visibility */
+  background: rgba(192,57,43,0.3); /* Stronger red background */
 }
 
 td.void {
