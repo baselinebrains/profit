@@ -55,7 +55,7 @@ function createTableFromCSV(data) {
 }
 
 function createProfitChart(tipsData) {
-  // Sort by date
+  // Sort by date ascending for cumulative profit
   tipsData.sort((a, b) => new Date(a[0]) - new Date(b[0]));
 
   let cumulativeProfit = 0;
@@ -110,43 +110,52 @@ async function loadData() {
     const dashboardTable = createTableFromCSV(dashboardData);
     document.getElementById('dashboardContainer').appendChild(dashboardTable);
 
-    // Load Tips Log with DataTables
+    // Load Tips Log into existing table
     const tipsData = await fetchCSV(tipsUrl);
     tipsDataGlobal = tipsData; // Store for export and chart
 
+    // Sort tips data by date descending (most recent first)
+    const sortedTips = tipsData.slice(1).sort((a, b) => new Date(b[0]) - new Date(a[0]));
+
+    const tipsTbody = document.querySelector('.dataTable tbody');
+    tipsTbody.innerHTML = '';
+    sortedTips.forEach(row => {
+      if (!row.join('').trim()) return;
+      const [date, tournament, tip, odds, stake, outcome] = row;
+      const lowerOutcome = outcome ? outcome.toLowerCase() : '';
+      let outcomeClass = '';
+      if (lowerOutcome === 'win') {
+        outcomeClass = 'win';
+      } else if (lowerOutcome === 'loss') {
+        outcomeClass = 'loss';
+      } else if (lowerOutcome.includes('void')) {
+        outcomeClass = 'void';
+      } else if (lowerOutcome.includes('pending')) {
+        outcomeClass = 'pending';
+      }
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${date}</td>
+        <td>${tournament}</td>
+        <td>${tip}</td>
+        <td>${odds}</td>
+        <td>${stake}</td>
+        <td class="${outcomeClass}">${outcome}</td>
+      `;
+      tipsTbody.appendChild(tr);
+    });
+
+    // Initialize DataTables for Tips Log, preserving the pre-sorted order
     $('#tipsTable').DataTable({
-      data: tipsData.slice(1),
-      columns: [
-        { data: 0 },
-        { data: 1 },
-        { data: 2 },
-        { data: 3 },
-        { data: 4 },
-        {
-          data: 5,
-          createdCell: function (td, cellData, rowData, row, col) {
-            const lowerOutcome = cellData ? cellData.toLowerCase() : '';
-            if (lowerOutcome === 'win') {
-              $(td).addClass('win');
-            } else if (lowerOutcome === 'loss') {
-              $(td).addClass('loss');
-            } else if (lowerOutcome.includes('void')) {
-              $(td).addClass('void');
-            } else if (lowerOutcome.includes('pending')) {
-              $(td).addClass('pending');
-            }
-          }
-        }
-      ],
-      order: [[0, 'desc']], // Default sort by Date (column 0) descending (most recent first)
       paging: true,
       pageLength: 20,
       searching: true,
       ordering: true,
-      responsive: true
+      responsive: true,
+      order: [] // No initial sort, to keep the pre-sorted order
     });
 
-    // Create profit chart
+    // Create profit chart (uses ascending sort internally)
     createProfitChart(tipsData.slice(1));
 
     // Update last updated
