@@ -24,16 +24,21 @@
 
   <div id="loading">Loading data...</div>
 
-  <section id="dashboard">
-    <h2><i class="fa fa-brain"></i> Dashboard</h2>
+  <section id="dashboard" role="region" aria-labelledby="dashboard-heading">
+    <h2 id="dashboard-heading"><i class="fa fa-brain"></i> Dashboard</h2>
     <div id="dashboardContainer" class="chart-container"></div>
     <div class="chart-container">
-      <canvas id="profitChart" width="600" height="300"></canvas>
+      <canvas id="profitChart" width="600" height="300" aria-describedby="chartDesc"></canvas>
+      <p id="chartDesc" class="sr-only">Line chart showing cumulative profit over time from tennis tips.</p>
     </div>
   </section>
 
-  <section id="tips">
-    <h2><i class="fa fa-table-tennis-paddle-ball"></i> Tips Log</h2>
+  <section id="tips" role="region" aria-labelledby="tips-heading">
+    <h2 id="tips-heading"><i class="fa fa-table-tennis-paddle-ball"></i> Tips Log</h2>
+    <div class="date-filter">
+      From: <input type="date" id="fromDate">
+      To: <input type="date" id="toDate">
+    </div>
     <button id="exportCsv">Export to CSV</button>
     <div class="table-container">
       <table id="tipsTable" class="dataTable">
@@ -57,10 +62,13 @@
     <p>Results shown are for transparency. Past performance is not a guarantee of future results. Gamble responsibly.</p>
   </footer>
 
+  <button id="backToTop" title="Back to top"><i class="fa fa-arrow-up"></i></button>
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js" defer></script>
   <script src="app.js"></script>
 </body>
 </html>
