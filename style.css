@@ -79,12 +79,13 @@ th {
   border: 1px solid #FFD700;
 }
 
-tr:nth-child(even) {
-  background-color: #E8F5E9;
+tr {
+  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+  transition: background 0.3s;
 }
 
-tr {
-  transition: background 0.3s;
+tr:nth-child(even) {
+  background-color: #E8F5E9;
 }
 
 tr:hover {
@@ -121,7 +122,7 @@ td.pending {
   border: 2px solid #FFD700;
   border-radius: 8px;
   background: #fff;
-  padding: 0.5rem;
+  padding: 1.5rem;
   overflow-x: auto;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
@@ -209,6 +210,66 @@ nav a {
   background: #fff;
 }
 
+section {
+  margin-bottom: 3rem;
+}
+
+.chart-container, .dataTable {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-container, .dataTable {
+    animation: none;
+  }
+}
+
+.dashboard-table td:first-child {
+  font-weight: bold;
+}
+
+.highlight {
+  background: #FFD700;
+  color: #000;
+  font-size: 1.1rem;
+}
+
+#backToTop {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #FFD700;
+  color: #000;
+  border: none;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: none;
+}
+
+#backToTop:hover {
+  background: #fff;
+}
+
+:focus {
+  outline: 2px solid #FFD700;
+}
+
+.date-filter {
+  margin-bottom: 1rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
 @media (max-width: 768px) {
   body {
     padding: 0.5rem;
@@ -226,5 +287,12 @@ nav a {
   .chart-container {
     max-width: 100%;
     padding: 0.5rem;
+  }
+  nav {
+    display: flex;
+    flex-direction: column;
+  }
+  nav a {
+    margin: 0.5rem 0;
   }
 }
