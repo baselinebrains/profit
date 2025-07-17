@@ -8,7 +8,8 @@ let tipsDataGlobal = []; // To store tips data for export and charts
 async function fetchCSV(url) {
   const response = await fetch(url);
   const csvText = await response.text();
-  return csvText.split('\n').map(row => row.split(',').map(cell => cell.trim()));
+  const parsed = Papa.parse(csvText, {header: false, skipEmptyLines: true});
+  return parsed.data;
 }
 
 function createTableFromCSV(data) {
@@ -107,30 +108,6 @@ async function loadData() {
     // Load Dashboard as table
     const dashboardData = await fetchCSV(dashboardUrl);
     const dashboardTable = createTableFromCSV(dashboardData);
-
-    // Enhance dashboard with additional metrics
-    let wins = 0, losses = 0, voids = 0, totalStakes = 0, totalProfit = 0;
-    dashboardData.slice(1).forEach(row => {
-      const [metric, value] = row;
-      const lowerMetric = metric.toLowerCase();
-      if (lowerMetric === 'wins') wins = parseInt(value);
-      if (lowerMetric === 'losses') losses = parseInt(value);
-      if (lowerMetric.includes('void')) voids = parseInt(value);
-      if (lowerMetric.includes('total stakes')) totalStakes = parseFloat(value);
-      if (lowerMetric.includes('total profit')) totalProfit = parseFloat(value);
-    });
-
-    const winRatio = ((wins / (wins + losses)) * 100).toFixed(2) + '%';
-    const roi = ((totalProfit / totalStakes) * 100).toFixed(2) + '%';
-
-    const extraRow1 = document.createElement('tr');
-    extraRow1.innerHTML = '<td>Win Ratio</td><td>' + winRatio + '</td>';
-    dashboardTable.querySelector('tbody').appendChild(extraRow1);
-
-    const extraRow2 = document.createElement('tr');
-    extraRow2.innerHTML = '<td>ROI</td><td>' + roi + '</td>';
-    dashboardTable.querySelector('tbody').appendChild(extraRow2);
-
     document.getElementById('dashboardContainer').appendChild(dashboardTable);
 
     // Load Tips Log into existing table
