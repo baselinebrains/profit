@@ -1,225 +1,203 @@
-body {
-  font-family: 'Roboto', Arial, sans-serif;
-  padding: 1rem;
-  background: linear-gradient(to bottom, #2D4F3A, #1E3A28);
-  color: #fff;
-  text-align: center;
-  line-height: 1.6;
+// app.js - Fetch data from Google Sheets and populate tables
+
+const dashboardUrl = 'https://docs.google.com/spreadsheets/d/1Qvnbf4YhDpheyetWUjf0YcMoAbXTWqfX/export?format=csv&gid=1265439786';
+const tipsUrl = 'https://docs.google.com/spreadsheets/d/1Qvnbf4YhDpheyetWUjf0YcMoAbXTWqfX/export?format=csv&gid=1251556089';
+
+let tipsDataGlobal = []; // To store tips data for export and charts
+
+async function fetchCSV(url) {
+  const response = await fetch(url);
+  const csvText = await response.text();
+  return csvText.split('\n').map(row => row.split(',').map(cell => cell.trim()));
 }
 
-.hero {
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Ensures logo, title, and last updated are centered */
+function createTableFromCSV(data) {
+  const table = document.createElement('table');
+  const thead = document.createElement('thead');
+  const tbody = document.createElement('tbody');
+
+  // Header row
+  const headerRow = document.createElement('tr');
+  data[0].forEach(header => {
+    const th = document.createElement('th');
+    th.textContent = header;
+    th.setAttribute('aria-label', header);
+    headerRow.appendChild(th);
+  });
+  thead.appendChild(headerRow);
+
+  // Data rows
+  data.slice(1).forEach(rowData => {
+    if (rowData.every(cell => !cell)) return; // Skip empty rows
+    const tr = document.createElement('tr');
+    rowData.forEach((cell, index) => {
+      const td = document.createElement('td');
+      td.textContent = cell;
+      if (index === 0) { // Metric column
+        const lowerCell = cell.toLowerCase();
+        if (lowerCell === 'wins') {
+          td.className = 'win';
+        } else if (lowerCell === 'losses') {
+          td.className = 'loss';
+        } else if (lowerCell.includes('void')) {
+          td.className = 'void';
+        }
+      }
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(thead);
+  table.appendChild(tbody);
+  return table;
 }
 
-.logo {
-  width: 100%;
-  max-width: 150px;
-  margin: 0 auto;
-  animation: fadeIn 1s ease-in;
+function createProfitChart(tipsData) {
+  // Sort by date
+  tipsData.sort((a, b) => new Date(a[0]) - new Date(b[0]));
+
+  let cumulativeProfit = 0;
+  const labels = [];
+  const profits = [];
+
+  tipsData.forEach(row => {
+    const [date, , , odds, stake, outcome] = row;
+    if (!outcome) return;
+    const lowerOutcome = outcome.toLowerCase();
+    let profit = 0;
+    if (lowerOutcome === 'win') {
+      profit = parseFloat(stake) * (parseFloat(odds) - 1);
+    } else if (lowerOutcome === 'loss') {
+      profit = -parseFloat(stake);
+    } // void or pending = 0
+    cumulativeProfit += profit;
+    labels.push(date);
+    profits.push(cumulativeProfit);
+  });
+
+  const ctx = document.getElementById('profitChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Cumulative Profit',
+        data: profits,
+        borderColor: '#FFD700',
+        backgroundColor: 'rgba(255, 215, 0, 0.2)',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+async function loadData() {
+  const loading = document.getElementById('loading');
+  loading.style.display = 'block';
 
-h1, h2 {
-  font-family: 'Fredoka', sans-serif;
-  margin: 0.5rem 0;
-  font-size: 2rem;
-  color: #FFD700;
-  font-weight: 600;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-}
+  try {
+    // Load Dashboard as table
+    const dashboardData = await fetchCSV(dashboardUrl);
+    const dashboardTable = createTableFromCSV(dashboardData);
 
-#lastUpdated {
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  color: #ddd;
-}
+    // Enhance dashboard with additional metrics
+    let wins = 0, losses = 0, voids = 0, totalStakes = 0, totalProfit = 0;
+    dashboardData.slice(1).forEach(row => {
+      const [metric, value] = row;
+      const lowerMetric = metric.toLowerCase();
+      if (lowerMetric === 'wins') wins = parseInt(value);
+      if (lowerMetric === 'losses') losses = parseInt(value);
+      if (lowerMetric.includes('void')) voids = parseInt(value);
+      if (lowerMetric.includes('total stakes')) totalStakes = parseFloat(value);
+      if (lowerMetric.includes('total profit')) totalProfit = parseFloat(value);
+    });
 
-h2 {
-  margin: 0.5rem 0;
-  color: #FFD700;
-  font-weight: 600;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-}
+    const winRatio = ((wins / (wins + losses)) * 100).toFixed(2) + '%';
+    const roi = ((totalProfit / totalStakes) * 100).toFixed(2) + '%';
 
-.table-container {
-  overflow-x: auto;
-}
+    const extraRow1 = document.createElement('tr');
+    extraRow1.innerHTML = '<td>Win Ratio</td><td>' + winRatio + '</td>';
+    dashboardTable.querySelector('tbody').appendChild(extraRow1);
 
-table.dataTable {
-  border-collapse: collapse;
-  margin: 0 auto 1rem;
-  width: 95%;
-  max-width: 1000px;
-  background: #fff;
-  color: #000;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
+    const extraRow2 = document.createElement('tr');
+    extraRow2.innerHTML = '<td>ROI</td><td>' + roi + '</td>';
+    dashboardTable.querySelector('tbody').appendChild(extraRow2);
 
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
+    document.getElementById('dashboardContainer').appendChild(dashboardTable);
 
-th {
-  background: #FFD700;
-  color: #000;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  border: 1px solid #FFD700;
-}
+    // Load Tips Log into existing table
+    const tipsData = await fetchCSV(tipsUrl);
+    tipsDataGlobal = tipsData; // Store for export and chart
+    const tipsTbody = document.querySelector('.dataTable tbody');
+    tipsTbody.innerHTML = '';
+    tipsData.slice(1).forEach(row => {
+      if (!row.join('').trim()) return;
+      const [date, tournament, tip, odds, stake, outcome] = row;
+      const lowerOutcome = outcome ? outcome.toLowerCase() : '';
+      let outcomeClass = '';
+      if (lowerOutcome === 'win') {
+        outcomeClass = 'win';
+      } else if (lowerOutcome === 'loss') {
+        outcomeClass = 'loss';
+      } else if (lowerOutcome.includes('void')) {
+        outcomeClass = 'void';
+      } else if (lowerOutcome.includes('pending')) {
+        outcomeClass = 'pending';
+      }
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${date}</td>
+        <td>${tournament}</td>
+        <td>${tip}</td>
+        <td>${odds}</td>
+        <td>${stake}</td>
+        <td class="${outcomeClass}">${outcome}</td>
+      `;
+      tipsTbody.appendChild(tr);
+    });
 
-tr:nth-child(even) {
-  background-color: #E8F5E9;
-}
+    // Initialize DataTables for Tips Log
+    $('#tipsTable').DataTable({
+      paging: true,
+      pageLength: 20,
+      searching: true,
+      ordering: true,
+      responsive: true
+    });
 
-tr {
-  transition: background 0.3s;
-}
+    // Create profit chart
+    createProfitChart(tipsData.slice(1));
 
-tr:hover {
-  background-color: #DCE775;
-}
-
-td.win {
-  color: #fff;
-  font-weight: bold;
-  background: #0b883e !important;
-}
-
-td.loss {
-  color: #fff;
-  font-weight: bold;
-  background: #c0392b !important;
-}
-
-td.void {
-  color: #fff;
-  font-weight: bold;
-  background: #888 !important;
-}
-
-td.pending {
-  color: #000;
-  font-weight: bold;
-  background: #ddd !important;
-}
-
-.chart-container {
-  max-width: 1000px;
-  margin: 0 auto 1rem;
-  border: 2px solid #FFD700;
-  border-radius: 8px;
-  background: #fff;
-  padding: 0.5rem;
-  overflow-x: auto;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.chart-container table {
-  width: 100%;
-  border-collapse: collapse;
-  color: #000;
-  margin: 0 auto; /* Reinforce centering for metrics table */
-}
-
-.chart-container th, .chart-container td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-.chart-container th {
-  background: #FFD700;
-}
-
-.chart-container tr:nth-child(even) {
-  background-color: #E8F5E9;
-}
-
-.chart-container tr:hover {
-  background-color: #DCE775;
-}
-
-footer {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #aaa;
-  background: #1E3A28;
-  padding: 1rem;
-  position: relative;
-  width: 100%;
-}
-
-a {
-  color: #FFD700;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-a:hover {
-  color: #fff;
-  text-decoration: underline;
-}
-
-i.fab {
-  margin-right: 0.5rem;
-}
-
-nav {
-  margin: 1rem 0;
-}
-
-nav a {
-  margin: 0 1rem;
-  font-size: 1.1rem;
-}
-
-#loading {
-  font-size: 1.2rem;
-  color: #FFD700;
-  display: none;
-}
-
-#exportCsv {
-  background: #FFD700;
-  color: #000;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 1rem;
-}
-
-#exportCsv:hover {
-  background: #fff;
-}
-
-@media (max-width: 768px) {
-  body {
-    padding: 0.5rem;
-  }
-  h1 {
-    font-size: 1.5rem;
-  }
-  .logo {
-    max-width: 100px;
-  }
-  table.dataTable {
-    font-size: 0.8rem;
-    width: 100%;
-  }
-  .chart-container {
-    max-width: 100%;
-    padding: 0.5rem;
+    // Update last updated
+    document.getElementById('lastUpdated').textContent = `Last Updated: ${new Date().toLocaleString()}`;
+  } catch (error) {
+    console.error('Error loading data:', error);
+    document.getElementById('lastUpdated').textContent = 'Error loading data - Ensure sheets are published as CSV.';
+  } finally {
+    loading.style.display = 'none';
   }
 }
+
+// Export functionality
+document.getElementById('exportCsv').addEventListener('click', function() {
+  const csv = Papa.unparse(tipsDataGlobal);
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'tips_log.csv');
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+});
+
+document.addEventListener('DOMContentLoaded', loadData);
