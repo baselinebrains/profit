@@ -150,6 +150,11 @@ td.pending {
   background-color: #DCE775;
 }
 
+.chart-container canvas {
+  max-width: 100%;
+  height: auto;
+}
+
 footer {
   margin-top: 1rem;
   font-size: 0.9rem;
