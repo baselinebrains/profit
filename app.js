@@ -85,8 +85,8 @@ function createProfitChart(tipsData) {
       datasets: [{
         label: 'Cumulative Profit',
         data: profits,
-        borderColor: '#FFD700',
-        backgroundColor: 'rgba(255, 215, 0, 0.2)',
+        borderColor: '#FFFF00',
+        backgroundColor: 'rgba(255, 255, 0, 0.2)',
         borderWidth: 2
       }]
     },
